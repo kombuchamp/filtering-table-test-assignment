@@ -1,9 +1,12 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { API } from '../services/API';
 import { filtersReducer } from './reducers/Filters';
+import { themeReducer } from './reducers/Theme';
 
 const rootReducer = combineReducers({
     filtersReducer,
+    themeReducer,
+    // RTK Query reducer
     [API.reducerPath]: API.reducer,
 });
 
