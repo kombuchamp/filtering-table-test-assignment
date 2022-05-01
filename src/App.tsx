@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo, useState } from 'react';
+import React, { FC, memo, useMemo } from 'react';
 import {
     AppBar,
     Backdrop,
@@ -28,6 +28,8 @@ import { PaymentMode, Status, TableEntry } from './types/TableDataTypes';
 import { API } from './services/API';
 import SignalWifiStatusbarConnectedNoInternet4Icon from '@mui/icons-material/SignalWifiStatusbarConnectedNoInternet4';
 import { PAYMENT_METHOD_RENDER_TEXTS } from './const/renderTexts';
+import { Filters } from './store/reducers/Filters';
+import { useDebounced } from './hooks/useDebounced';
 
 function App() {
     return (
@@ -51,19 +53,10 @@ function App() {
                 </AppBar>
             </Grid>
             <Grid item container xs={12} justifyContent={'center'}>
-                <Filters />
+                <TableFilters />
             </Grid>
             <Grid item container xs={12} justifyContent={'center'}>
-                <Paper
-                    elevation={3}
-                    sx={{
-                        flexGrow: 1,
-                        margin: '0 20px',
-                        padding: 2,
-                    }}
-                >
-                    <Content />
-                </Paper>
+                <Content />
             </Grid>
         </Grid>
     );
@@ -71,6 +64,11 @@ function App() {
 
 function Content() {
     const { isLoading, isError, data } = API.useFetchTableDataQuery();
+
+    const filters = useDebounced(
+        useTypedSelector((state) => state.filtersReducer),
+        500
+    );
 
     if (isLoading) {
         return (
@@ -102,99 +100,139 @@ function Content() {
             </Grid>
         );
     }
-    return data ? <DataTable data={data} /> : null;
+    return data ? (
+        <Paper
+            elevation={3}
+            sx={{
+                flexGrow: 1,
+                margin: '0 20px',
+                padding: 2,
+            }}
+        >
+            <DataTable data={data} filters={filters} />
+        </Paper>
+    ) : null;
 }
 
-const DataTable: FC<{ data: TableEntry[] }> = ({ data: data }) => {
-    // TODO: might be constant
-    const columns: readonly Column<TableEntry>[] = useMemo(
-        () =>
-            [
-                {
-                    Header: 'Name',
-                    accessor: 'name',
-                },
-
-                {
-                    Header: 'Payment modes',
-                    accessor: 'paymentModes',
-                    // TODO: вынести в компонент
-                    Cell: ({ cell }) => {
-                        return (
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    flexWrap: 'wrap',
-                                    gap: 0.5,
-                                }}
-                            >
-                                {cell.value.map((value) => (
-                                    <Chip
-                                        size={'small'}
-                                        key={value}
-                                        label={
-                                            PAYMENT_METHOD_RENDER_TEXTS[value]
-                                        }
-                                    />
-                                ))}
-                            </Box>
-                        );
+// eslint-disable-next-line react/display-name
+const DataTable: FC<{ data: TableEntry[]; filters: Filters }> = memo(
+    ({ data, filters }) => {
+        // TODO: might be constant
+        const columns: readonly Column<TableEntry>[] = useMemo(
+            () =>
+                [
+                    {
+                        Header: 'Name',
+                        accessor: 'name',
                     },
-                },
 
-                {
-                    Header: 'Status',
-                    accessor: 'status',
-                },
-            ] as const,
-        []
-    );
+                    {
+                        Header: 'Payment modes',
+                        accessor: 'paymentModes',
+                        // TODO: вынести в компонент
+                        Cell: ({ cell }) => {
+                            return (
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        flexWrap: 'wrap',
+                                        gap: 0.5,
+                                    }}
+                                >
+                                    {cell.value.map((value) => (
+                                        <Chip
+                                            size={'small'}
+                                            key={value}
+                                            label={
+                                                PAYMENT_METHOD_RENDER_TEXTS[
+                                                    value
+                                                ]
+                                            }
+                                        />
+                                    ))}
+                                </Box>
+                            );
+                        },
+                    },
 
-    const { getTableProps, headerGroups, rows, prepareRow } = useTable({
-        data,
-        columns,
-    });
+                    {
+                        Header: 'Status',
+                        accessor: 'status',
+                    },
+                ] as const,
+            []
+        );
 
-    return (
-        <Table stickyHeader {...getTableProps()}>
-            <TableHead>
-                {headerGroups.map((headerGroup) => (
-                    // NOTE: react-table generates key on our behalf here
-                    <TableRow {...headerGroup.getHeaderGroupProps()}>
-                        {headerGroup.headers.map((column) => (
-                            <TableCell {...column.getHeaderProps()}>
-                                <b>{column.render('Header')}</b>
-                            </TableCell>
-                        ))}
-                    </TableRow>
-                ))}
-            </TableHead>
-            <TableBody>
-                {rows.map((row, i) => {
-                    prepareRow(row);
-                    return (
-                        <TableRow {...row.getRowProps()}>
-                            {row.cells.map((cell) => {
-                                return (
-                                    <TableCell {...cell.getCellProps()}>
-                                        {cell.render('Cell')}
-                                    </TableCell>
-                                );
-                            })}
+        // const filters = useDebounced(
+        //     useTypedSelector((state) => state.filtersReducer),
+        //     500
+        // );
+
+        const applyFilters = (data: TableEntry[], filters: Filters) => {
+            return data.filter(({ name, paymentModes, status }) => {
+                if (filters.name && !name.startsWith(filters.name)) {
+                    return false;
+                }
+                if (
+                    filters.paymentModes.length &&
+                    !filters.paymentModes.every((pm) =>
+                        paymentModes.includes(pm)
+                    )
+                ) {
+                    return false;
+                }
+                if (filters.status && status !== filters.status) {
+                    return false;
+                }
+                return true;
+            });
+        };
+
+        const { getTableProps, headerGroups, rows, prepareRow } = useTable({
+            data: applyFilters(data, filters),
+            columns,
+        });
+
+        return (
+            <Table stickyHeader {...getTableProps()}>
+                <TableHead>
+                    {headerGroups.map((headerGroup) => (
+                        // NOTE: react-table generates key on our behalf here
+                        <TableRow {...headerGroup.getHeaderGroupProps()}>
+                            {headerGroup.headers.map((column) => (
+                                <TableCell {...column.getHeaderProps()}>
+                                    <b>{column.render('Header')}</b>
+                                </TableCell>
+                            ))}
                         </TableRow>
-                    );
-                })}
-            </TableBody>
-        </Table>
-    );
-};
+                    ))}
+                </TableHead>
+                <TableBody>
+                    {rows.map((row, i) => {
+                        prepareRow(row);
+                        return (
+                            <TableRow {...row.getRowProps()}>
+                                {row.cells.map((cell) => {
+                                    return (
+                                        <TableCell {...cell.getCellProps()}>
+                                            {cell.render('Cell')}
+                                        </TableCell>
+                                    );
+                                })}
+                            </TableRow>
+                        );
+                    })}
+                </TableBody>
+            </Table>
+        );
+    }
+);
 
-function Filters() {
+function TableFilters() {
     const dispatch = useTypedDispatch();
     const { paymentModes, status, name } = useTypedSelector(
         (state) => state.filtersReducer
     );
-    console.log({ paymentModes, status, name });
 
     return (
         <Paper
@@ -221,28 +259,6 @@ function Filters() {
                             dispatch(setFilters({ name: e.target.value }));
                         }}
                     />
-                </Grid>
-                <Grid item sm={4} xs={12}>
-                    <FormControl fullWidth size={'small'}>
-                        <InputLabel id={'status-filter'}>Status</InputLabel>
-                        <Select
-                            label={'Status'}
-                            labelId={'status-filter'}
-                            value={status}
-                            onChange={(e) => {
-                                dispatch(
-                                    setFilters({
-                                        status: e.target.value as Status,
-                                    })
-                                );
-                            }}
-                        >
-                            <MenuItem value={''}>None</MenuItem>
-                            <MenuItem value={'NEW'}>NEW</MenuItem>
-                            <MenuItem value={'LIVE'}>LIVE</MenuItem>
-                            <MenuItem value={'OFFLINE'}>OFFLINE</MenuItem>
-                        </Select>
-                    </FormControl>
                 </Grid>
                 <Grid item sm={4} xs={12}>
                     <FormControl fullWidth size={'small'}>
@@ -293,6 +309,28 @@ function Filters() {
                             <MenuItem value={'BANK_TRANSFER'}>
                                 {PAYMENT_METHOD_RENDER_TEXTS['BANK_TRANSFER']}{' '}
                             </MenuItem>
+                        </Select>
+                    </FormControl>
+                </Grid>
+                <Grid item sm={4} xs={12}>
+                    <FormControl fullWidth size={'small'}>
+                        <InputLabel id={'status-filter'}>Status</InputLabel>
+                        <Select
+                            label={'Status'}
+                            labelId={'status-filter'}
+                            value={status}
+                            onChange={(e) => {
+                                dispatch(
+                                    setFilters({
+                                        status: e.target.value as Status,
+                                    })
+                                );
+                            }}
+                        >
+                            <MenuItem value={''}>None</MenuItem>
+                            <MenuItem value={'NEW'}>NEW</MenuItem>
+                            <MenuItem value={'LIVE'}>LIVE</MenuItem>
+                            <MenuItem value={'OFFLINE'}>OFFLINE</MenuItem>
                         </Select>
                     </FormControl>
                 </Grid>

@@ -1,7 +1,7 @@
 import { TableEntry } from '../../types/TableDataTypes';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-type Filters = {
+export type Filters = {
     name: TableEntry['name'];
     status: TableEntry['status'] | '';
     paymentModes: TableEntry['paymentModes'];
@@ -17,7 +17,7 @@ export const filtersSlice = createSlice({
     name: 'Filters',
     initialState,
     reducers: {
-        setFilters(state, action: PayloadAction<Partial<Filters>>) {
+        setFilters: (state, action: PayloadAction<Partial<Filters>>) => {
             Object.assign(state, action.payload);
         },
     },
