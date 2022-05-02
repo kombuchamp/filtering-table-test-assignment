@@ -1,8 +1,6 @@
 import React, { FC } from 'react';
 import { useTypedDispatch, useTypedSelector } from '../../hooks/redux-helpers';
 import {
-    Box,
-    Chip,
     FormControl,
     Grid,
     InputLabel,
