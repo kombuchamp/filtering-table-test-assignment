@@ -1,4 +1,22 @@
-# Your Task
+# Test assignment
+### Table with filterable columns
+
+Technologies used:
+- React
+- TypeScript
+- Redux-Toolkit (includes RTKQuery, Immer, etc.)
+- Material UI
+- react-table
+- Jest + react-testing-library
+
+I took the liberty to recreate project using CRA with typescript template.
+I also left a couple of NOTE comments throughout the application explaining thought process behind decisions made
+Test coverage is incomplete (I wrote just a couple of tests as an example)
+
+I really enjoyed building this application and took the opportunity to try out redux-toolkit. I hope you'll enjoy
+reviewing it ;)
+
+# Task description
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
