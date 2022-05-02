@@ -1,5 +1,5 @@
 import { applyFilters } from './applyFilters';
-import { TableEntry } from '../../types/TableDataTypes';
+import { TableEntry } from '../types/TableDataTypes';
 
 const TEST_DATA: TableEntry[] = [
     {
@@ -54,7 +54,7 @@ describe('applyFilters', () => {
         const filteredData = applyFilters(TEST_DATA, {
             paymentModes: [],
             status: '',
-            name: 'Foo',
+            name: 'foo',
         });
         expect(filteredData.length).toEqual(2);
         for (const entry of filteredData) {

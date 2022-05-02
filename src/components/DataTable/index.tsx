@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { PAYMENT_METHOD_RENDER_TEXTS } from '../../const/renderTexts';
 import { BreadCrumbs } from '../BreadCrumbs';
-import { applyFilters } from './applyFilters';
+import { applyFilters } from '../../utils/applyFilters';
 
 const COLUMNS: readonly Column<TableEntry>[] = [
     {
