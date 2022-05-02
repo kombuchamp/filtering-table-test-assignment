@@ -1,9 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { parseTheme } from './parseTheme';
 
 export type Theme = 'dark' | 'light';
 
+const persistedTheme = localStorage.getItem('theme');
+
 const initialState = {
-    theme: 'light',
+    theme: parseTheme(persistedTheme) ?? 'light',
 };
 
 export const themeSlice = createSlice({

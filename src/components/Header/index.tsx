@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { AppBar, Box, Grid, Switch, Toolbar, Typography } from '@mui/material';
 import GridOnIcon from '@mui/icons-material/GridOn';
-import { useTypedDispatch } from '../../hooks/redux-helpers';
+import { useTypedDispatch, useTypedSelector } from '../../hooks/redux-helpers';
 import { setTheme } from '../../store/reducers/Theme';
 
 /**
@@ -10,6 +10,7 @@ import { setTheme } from '../../store/reducers/Theme';
  */
 export const Header: FC = () => {
     const dispatch = useTypedDispatch();
+    const { theme } = useTypedSelector((store) => store.themeReducer);
 
     return (
         <AppBar position={'static'}>
@@ -28,12 +29,13 @@ export const Header: FC = () => {
                         <Switch
                             title={'toggles light and dark theme'}
                             color={'secondary'}
+                            checked={theme !== 'light'}
                             onChange={(e) => {
-                                dispatch(
-                                    setTheme(
-                                        e.target.checked ? 'dark' : 'light'
-                                    )
-                                );
+                                const theme = e.target.checked
+                                    ? 'dark'
+                                    : 'light';
+                                localStorage.setItem('theme', theme);
+                                dispatch(setTheme(theme));
                             }}
                         />
                         <Typography>🌙</Typography>
