@@ -13,6 +13,8 @@ I took the liberty to recreate project using CRA with typescript template.
 I also left a couple of NOTE comments throughout the application explaining thought process behind decisions made
 Test coverage is incomplete (I wrote just a couple of tests as an example)
 
+Data loading is slightly artificially delayed to imitate slow network connection
+
 I really enjoyed building this application and took the opportunity to try out redux-toolkit. I hope you'll enjoy
 reviewing it ;)
 
