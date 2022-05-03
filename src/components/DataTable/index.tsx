@@ -10,7 +10,7 @@ import {
     TableHead,
     TableRow,
 } from '@mui/material';
-import { PAYMENT_METHOD_RENDER_TEXTS } from '../../const/renderTexts';
+import { PAYMENT_MODE_RENDER_TEXTS } from '../../const/renderTexts';
 import { BreadCrumbs } from '../BreadCrumbs';
 import { applyFilters } from '../../utils/applyFilters';
 
@@ -26,7 +26,7 @@ const COLUMNS: readonly Column<TableEntry>[] = [
             return (
                 <BreadCrumbs
                     values={cell.value.map(
-                        (code) => PAYMENT_METHOD_RENDER_TEXTS[code]
+                        (code) => PAYMENT_MODE_RENDER_TEXTS[code]
                     )}
                 />
             );
@@ -46,7 +46,7 @@ const COLUMNS: readonly Column<TableEntry>[] = [
  * It is viable because rendering of large list (like one we are rendering without filters) takes
  * significant amount of time.
  *
- * More optimal solution could be:
+ * More optimized solution could be:
  * - Filtering on backend and rendering with pagination
  * - Using virtualized list
  */
@@ -72,7 +72,7 @@ export const DataTable: FC<{ data: TableEntry[]; filters: Filters }> = memo(
                     ))}
                 </TableHead>
                 <TableBody>
-                    {rows.map((row, i) => {
+                    {rows.map((row) => {
                         prepareRow(row);
                         return (
                             <TableRow {...row.getRowProps()}>

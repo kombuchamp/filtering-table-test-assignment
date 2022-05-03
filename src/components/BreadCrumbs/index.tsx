@@ -17,8 +17,8 @@ export const BreadCrumbs: FC<{
                 gap: 0.5,
             }}
         >
-            {values.map((value) => (
-                <Chip size={'small'} key={value} label={value} />
+            {values.map((value, i) => (
+                <Chip size={'small'} key={value + i} label={value} />
             ))}
         </Box>
     );

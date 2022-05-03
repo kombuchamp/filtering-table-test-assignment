@@ -14,8 +14,16 @@ import {
 
 import { setFilters } from '../../store/reducers/Filters';
 import { PaymentMode, Status } from '../../types/TableDataTypes';
-import { PAYMENT_METHOD_RENDER_TEXTS } from '../../const/renderTexts';
+import { PAYMENT_MODE_RENDER_TEXTS } from '../../const/renderTexts';
 import { BreadCrumbs } from '../BreadCrumbs';
+
+const PAYMENT_MODES_FILTERS: PaymentMode[] = [
+    'PAYPAL',
+    'BANK_TRANSFER',
+    'CREDIT_CARD',
+];
+
+const STATUS_FILTERS: (Status | '')[] = ['', 'NEW', 'LIVE', 'OFFLINE'];
 
 /**
  * Contains inputs for setting filter values
@@ -75,20 +83,18 @@ export const TableFilters: FC = () => {
                                 <BreadCrumbs
                                     values={selected.map(
                                         (value) =>
-                                            PAYMENT_METHOD_RENDER_TEXTS[value]
+                                            PAYMENT_MODE_RENDER_TEXTS[value]
                                     )}
                                 />
                             )}
                         >
-                            <MenuItem value={'CREDIT_CARD'}>
-                                {PAYMENT_METHOD_RENDER_TEXTS['CREDIT_CARD']}
-                            </MenuItem>
-                            <MenuItem value={'PAYPAL'}>
-                                {PAYMENT_METHOD_RENDER_TEXTS['PAYPAL']}
-                            </MenuItem>
-                            <MenuItem value={'BANK_TRANSFER'}>
-                                {PAYMENT_METHOD_RENDER_TEXTS['BANK_TRANSFER']}{' '}
-                            </MenuItem>
+                            {PAYMENT_MODES_FILTERS.map((mode) => {
+                                return (
+                                    <MenuItem value={mode} key={mode}>
+                                        {PAYMENT_MODE_RENDER_TEXTS[mode]}
+                                    </MenuItem>
+                                );
+                            })}
                         </Select>
                     </FormControl>
                 </Grid>
@@ -107,10 +113,11 @@ export const TableFilters: FC = () => {
                                 );
                             }}
                         >
-                            <MenuItem value={''}>None</MenuItem>
-                            <MenuItem value={'NEW'}>NEW</MenuItem>
-                            <MenuItem value={'LIVE'}>LIVE</MenuItem>
-                            <MenuItem value={'OFFLINE'}>OFFLINE</MenuItem>
+                            {STATUS_FILTERS.map((status) => (
+                                <MenuItem key={status} value={status}>
+                                    {status || 'None'}
+                                </MenuItem>
+                            ))}
                         </Select>
                     </FormControl>
                 </Grid>
