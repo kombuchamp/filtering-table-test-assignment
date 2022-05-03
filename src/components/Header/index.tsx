@@ -1,6 +1,8 @@
 import React, { FC } from 'react';
+
 import { AppBar, Box, Grid, Switch, Toolbar, Typography } from '@mui/material';
 import GridOnIcon from '@mui/icons-material/GridOn';
+
 import { useTypedDispatch, useTypedSelector } from '../../hooks/redux-helpers';
 import { setTheme } from '../../store/reducers/Theme';
 

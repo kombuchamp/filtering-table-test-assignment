@@ -1,6 +1,7 @@
 import React, { FC, useState } from 'react';
-import { useDebounced } from './useDebounced';
 import { act, fireEvent, render, screen } from '@testing-library/react';
+
+import { useDebounced } from './useDebounced';
 
 describe('useDebounced', () => {
     beforeEach(() => {

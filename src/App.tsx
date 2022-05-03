@@ -1,6 +1,8 @@
 import React, { FC } from 'react';
+
 import { Grid, ThemeProvider } from '@mui/material';
 import { TableFilters } from './components/TableFilters';
+
 import { Header } from './components/Header';
 import { Content } from './components/Content';
 import { DARK_THEME, LIGHT_THEME } from './const/themes';

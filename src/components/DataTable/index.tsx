@@ -1,8 +1,8 @@
-// eslint-disable-next-line react/display-name
 import React, { FC, memo } from 'react';
+import { Column, useTable } from 'react-table';
+
 import { TableEntry } from '../../types/TableDataTypes';
 import { Filters } from '../../store/reducers/Filters';
-import { Column, useTable } from 'react-table';
 import {
     Table,
     TableBody,

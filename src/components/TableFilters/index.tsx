@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+
 import { useTypedDispatch, useTypedSelector } from '../../hooks/redux-helpers';
 import {
     FormControl,
@@ -10,6 +11,7 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
+
 import { setFilters } from '../../store/reducers/Filters';
 import { PaymentMode, Status } from '../../types/TableDataTypes';
 import { PAYMENT_METHOD_RENDER_TEXTS } from '../../const/renderTexts';
