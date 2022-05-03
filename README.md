@@ -1,6 +1,8 @@
 # Test assignment
 ### Table with filterable columns
 
+Demo: https://kombuchamp.github.io/filtering-table-test-assignment/
+
 Technologies used:
 - React
 - TypeScript
